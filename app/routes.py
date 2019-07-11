@@ -1,7 +1,9 @@
-from app import app
+from app import application
+from app.models import Film
 
 
-@app.route('/')
-@app.route('/index')
-def index():
-    return "Hello, World!"
+@application.route('/films')
+def films():
+    new_film = Film("spider-man: far from home", ["fantasy", "sci-fi"])
+    new_film.insert()
+    return new_film.films().__repr__()

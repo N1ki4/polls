@@ -1,9 +1,8 @@
 from flask import Flask
-from pymongo import MongoClient
 from flask_restplus import Api
+from app.database import DB
 
-app = Flask(__name__)
-api = Api(app)
-client = MongoClient('localhost', 27017)
+application = Flask(__name__)
+api = Api(application)
 
 from app import routes
