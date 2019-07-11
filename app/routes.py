@@ -1,9 +1,8 @@
 from app import application
-from app.models import Film
+from app.database import DB
 
 
 @application.route('/films')
 def films():
-    new_film = Film("spider-man: far from home", ["fantasy", "sci-fi"])
-    new_film.insert()
-    return new_film.films().__repr__()
+    """Returns all films in database in a representational string."""
+    return DB.find_all("films").__repr__()
