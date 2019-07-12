@@ -1,6 +1,8 @@
-from app import app
+from app import application
+from app.database import DB
 
-@app.route('/')
-@app.route('/index')
-def index():
-    return "Hello, World!"
+
+@application.route('/films')
+def films():
+    """Returns all films in database in a representational string."""
+    return DB.find_all("films").__repr__()
