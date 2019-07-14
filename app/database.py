@@ -1,8 +1,8 @@
 from pymongo import MongoClient
-import json
+from typing import Iterator
 
 
-class DB:
+class Database:
     """A class for managing database.
 
     Vars:
@@ -12,39 +12,43 @@ class DB:
     """
     URI = "localhost:127.0.0.1:27017"
     client = MongoClient()
-    DATABASE = client['films']
+    DATABASE = client['polls']
 
     @staticmethod
-    def insert_one(collection: str, data: json):
+    def insert_one(collection: str, data: dict):
         """Static method for inserting a single document to the database.
 
         Args:
             collection (str): Name of DB collection.
-            data (JSON): Data of object in JSON representation.
+            data (dict): Data of object.
         """
-        DB.DATABASE[collection].insert_one(data)
+        return Database.DATABASE[collection].insert_one(data)
 
     @staticmethod
-    def find_one(collection: str, query: json) -> json:
+    def find_one(collection: str, query: dict) -> dict:
         """Static method for getting a single document from the database.
 
         Args:
             collection (str): Name of DB collection.
-            query (JSON): Query of object in JSON representation.
+            query (dict): Query of object.
 
         Returns:
             a single document in JSON representation.
         """
-        return DB.DATABASE[collection].find_one(query)
+        return Database.DATABASE[collection].find_one(query)
 
     @staticmethod
-    def find_all(collection: str) -> json:
+    def find_all(collection: str) -> Iterator:
         """Static method for getting a single document from the database.
 
         Args:
             collection (str): Name of DB collection.
 
         Returns:
-            a single document in JSON representation.
+            a list of objects.
         """
-        return list(DB.DATABASE[collection].find())
+        return Database.DATABASE[collection].find()
+
+
+class DatabaseException(Exception):
+    pass
