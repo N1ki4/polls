@@ -1,5 +1,6 @@
-from pymongo import MongoClient
 from typing import Iterator
+
+from pymongo import MongoClient
 
 
 class Database:
@@ -12,7 +13,7 @@ class Database:
     """
     URI = "localhost:127.0.0.1:27017"
     client = MongoClient()
-    DATABASE = client['polls']
+    db = client['polls']
 
     @staticmethod
     def insert_one(collection: str, data: dict):
@@ -22,7 +23,7 @@ class Database:
             collection (str): Name of DB collection.
             data (dict): Data of object.
         """
-        return Database.DATABASE[collection].insert_one(data)
+        return Database.db[collection].insert_one(data)
 
     @staticmethod
     def find_one(collection: str, query: dict) -> dict:
@@ -35,7 +36,7 @@ class Database:
         Returns:
             a single document in JSON representation.
         """
-        return Database.DATABASE[collection].find_one(query)
+        return Database.db[collection].find_one(query)
 
     @staticmethod
     def find_all(collection: str) -> Iterator:
@@ -47,7 +48,7 @@ class Database:
         Returns:
             a list of objects.
         """
-        return Database.DATABASE[collection].find()
+        return Database.db[collection].find()
 
 
 class DatabaseException(Exception):

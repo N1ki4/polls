@@ -1,53 +1,43 @@
-from app.database import Database, DatabaseException
-from app import api
-from flask_restplus import fields, Api, Resource
+from typing import Iterator
+
+from flask_restplus import fields
+
+from . import api
+from .database import Database, DatabaseException
 
 
-class ModelBase:
-    collection_name = None
-    objects = Database
+choice_fields = api.model('Choice', {
+    '_id': fields.Integer(readonly=True),
+    'text': fields.String(required=True),
+    'votes': fields.Integer(default=0),
+})
 
-    def save(self):
-        result = Database.insert_one(collection=self.collection_name,
-                                     data=self.as_dict())
-        if result.acknowledged:
-            return result.inserted_id
-        else:
-            raise DatabaseException
-
-    def as_dict(self) -> dict:
-        """Returns question information in json representation.
-
-        Returns:
-            question information in json representation.
-        """
-        return vars(self)
-
-
-question_model = api.model('Question', {
+question_fields = api.model('Question', {
     '_id': fields.String(readonly=True),
     'text': fields.String(required=True),
-    'choices': fields.List(fields.String)
+    'choices': fields.List(fields.Nested(choice_fields), required=True)
 })
 
 
-class QuestionDao(ModelBase):  # probably have to add a time of creation
+class QuestionDao:  # probably have to add a time of creation
     """A class for question objects."""
     collection_name = 'questions'
 
-    def __init__(self):
-        self.questions = QuestionDao.objects.find_all(self.collection_name)
+    @staticmethod
+    def get_all() -> Iterator:
+        return Database.find_all(QuestionDao.collection_name)
 
-    def get(self, _id):
-        for question in self.questions:
-            if question['id'] == _id:
-                return question
-        api.abort(404, "Question {} doesn't exist".format(_id))
+    @staticmethod
+    def get_by_id(_id):
+        return Database.find_one(QuestionDao.collection_name, {'_id': _id})
 
-
-class Choice(ModelBase):  # issue with question relations
-    collection_name = 'choices'
-
-    def __init__(self, text, votes=0):
-        self.text = text
-        self.votes = votes
+    @staticmethod
+    def create(data):
+        for id_, choice in enumerate(data['choices'], start=1):
+            choice['_id'] = id_
+        result = Database.insert_one(QuestionDao.collection_name, data)
+        if result.acknowledged:
+            data.update({'_id': result.inserted_id})
+            return data
+        else:
+            raise DatabaseException
