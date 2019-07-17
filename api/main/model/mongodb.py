@@ -45,7 +45,26 @@ class Database:
         return db[collection].insert_one(data)
 
     @staticmethod
-    def update_one(collection: str, _id: ObjectId, data: dict) -> dict:
+    def update_one(collection: str, _id: str, data: dict) -> dict:
+        """
+        Static method for partly updating a single document in the database.
+
+        :param collection: name of DB collection.
+        :param _id: id of document to update.
+        :param data: data to update.
+        :return: updated document as dict.
+        """
         return db[collection].find_one_and_update(
             {'_id': ObjectId(_id)}, {'$set': data},
             return_document=ReturnDocument.AFTER)
+
+    @staticmethod
+    def delete_one(collection: str, _id: str) -> dict:
+        """
+        Static method for deleting a single document in the database.
+
+        :param collection: name of DB collection.
+        :param _id: id of document to delete.
+        :return: deleted document.
+        """
+        return db[collection].find_one_and_delete({'_id': ObjectId(_id)})

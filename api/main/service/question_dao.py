@@ -2,8 +2,8 @@ from typing import Iterator
 
 from bson import ObjectId
 
-from ..model.mongodb import Database
 from ..model.db_exception import DatabaseException
+from ..model.mongodb import Database
 
 
 class QuestionDao:  # probably have to add a time of creation
@@ -51,8 +51,29 @@ class QuestionDao:  # probably have to add a time of creation
             raise DatabaseException
 
     @staticmethod
-    def update(_id: ObjectId, data: dict) -> dict:
+    def update(_id: str, data: dict) -> dict:
+        """
+        Updates question data by its id.
+
+        :param _id: id of question to update.
+        :param data: data of question to update.
+        :return: updated question. If DatabaseException raises, returns it.
+        """
         result = Database.update_one(QuestionDao.collection_name, _id, data)
+        if result:
+            return result
+        else:
+            raise DatabaseException
+
+    @staticmethod
+    def delete(_id: str) -> dict:
+        """
+        Deletes question by its id.
+
+        :param _id: id of question to delete.
+        :return: deleted question. If DatabaseException raises, returns it.
+        """
+        result = Database.delete_one(QuestionDao.collection_name, _id)
         if result:
             return result
         else:
