@@ -23,7 +23,9 @@ class QuestionsList(Resource):
 
         :return: list of questions.
         """
-        return list(QuestionDao.get_all())
+        if list(QuestionDao.get_all()):
+            return list(QuestionDao.get_all())
+        api.abort(400)
 
     @api.expect(question_fields, validate=True)
     @api.marshal_with(question_fields, code=201)
