@@ -41,10 +41,3 @@ class Database:
         :return: a list of objects.
         """
         return db[collection].find()
-
-
-class DatabaseException(Exception):
-    """
-    A class for handling database exceptions.
-    """
-    pass
