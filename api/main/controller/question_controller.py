@@ -3,14 +3,14 @@ import json
 from flask import request
 from flask_restplus import Resource
 
-from app.main import api
-from app.main.service.question_dao import QuestionDao
-from app.main.util.dto import QuestionDto
+from .. import api, API_BASE_URL
+from ..service.question_dao import QuestionDao
+from ..util.dto import QuestionDto
 
 question_fields = QuestionDto.question_fields
 
 
-@api.route('/questions')
+@api.route(API_BASE_URL + '/questions')
 class QuestionsList(Resource):
     """
     A class for managing questions list.

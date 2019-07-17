@@ -1,6 +1,6 @@
 from flask_restplus import fields
 
-from app.main import api
+from .. import api
 
 
 class QuestionDto:

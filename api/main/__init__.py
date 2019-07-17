@@ -10,4 +10,6 @@ db = client['polls']
 app = Flask(__name__)
 api = Api(app)
 
-from app.main.controller import question_controller
+API_BASE_URL = '/api/polls'
+
+from .controller import question_controller

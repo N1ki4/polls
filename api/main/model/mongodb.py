@@ -2,7 +2,7 @@ from typing import Iterator
 
 from pymongo.results import InsertOneResult
 
-from app.main import db
+from .. import db
 
 
 class Database:

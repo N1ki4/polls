@@ -1,7 +1,7 @@
 from typing import Iterator
 
-from app.main.model.mongodb import Database
-from app.main.model.db_exception import DatabaseException
+from ..model.mongodb import Database
+from ..model.db_exception import DatabaseException
 
 
 class QuestionDao:  # probably have to add a time of creation
