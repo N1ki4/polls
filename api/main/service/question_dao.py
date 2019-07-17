@@ -1,5 +1,7 @@
 from typing import Iterator
 
+from bson import ObjectId
+
 from ..model.mongodb import Database
 from ..model.db_exception import DatabaseException
 
@@ -27,7 +29,8 @@ class QuestionDao:  # probably have to add a time of creation
         :param _id: str id of question.
         :return: question as dict.
         """
-        return Database.find_one(QuestionDao.collection_name, {'_id': _id})
+        return Database.find_one(QuestionDao.collection_name,
+                                 {'_id': ObjectId(_id)})
 
     @staticmethod
     def create(data: dict) -> dict:
@@ -44,5 +47,13 @@ class QuestionDao:  # probably have to add a time of creation
         if result.acknowledged:
             data.update({'_id': result.inserted_id})
             return data
+        else:
+            raise DatabaseException
+
+    @staticmethod
+    def update(_id: ObjectId, data: dict) -> dict:
+        result = Database.update_one(QuestionDao.collection_name, _id, data)
+        if result:
+            return result
         else:
             raise DatabaseException

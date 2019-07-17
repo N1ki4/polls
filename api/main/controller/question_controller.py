@@ -3,41 +3,27 @@ import json
 from flask import request
 from flask_restplus import Resource
 
-from .. import api, API_BASE_URL
-from ..service.question_dao import QuestionDao
-from ..util.dto import QuestionDto
+from api.main import api, API_BASE_URL
+from api.main.service.question_dao import QuestionDao
+from api.main.util.dto import QuestionDto
 
 question_fields = QuestionDto.question_fields
 
 
-@api.route(API_BASE_URL + '/questions')
-class QuestionsList(Resource):
-    """
-    A class for managing questions list.
-    """
-
-    @api.marshal_list_with(question_fields)
-    def get(self) -> list:
-        """
-        Gets list of questions.
-
-        :return: list of questions.
-        """
-        if list(QuestionDao.get_all()):
-            return list(QuestionDao.get_all())
+@api.route(API_BASE_URL + '/questions/<string:_id>')
+@api.param('_id', 'The question identifier')
+class Question(Resource):
+    @api.marshal_with(question_fields)
+    def get(self, _id: str) -> dict:
+        result = QuestionDao.get_by_id(_id)
+        if result:
+            return result
         api.abort(400)
 
-    @api.expect(question_fields, validate=True)
-    @api.marshal_with(question_fields, code=201)
-    def post(self) -> tuple:
-        """
-        Creates new question.
-        If question wasn't created, sends 400 error.
-
-        :return: question if question was created.
-        """
+    @api.marshal_with(question_fields, code=200)
+    def patch(self, _id) -> tuple:
         json_data = json.loads(request.data)
-        result = QuestionDao.create(json_data), 201
+        result = QuestionDao.update(_id, json_data), 200
         if result:
             return result
         api.abort(400)
