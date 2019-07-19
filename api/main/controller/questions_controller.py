@@ -37,7 +37,7 @@ class QuestionsList(Resource):
 
         :return: question if question was created.
         """
-        json_data = json.loads(request.data.decode('utf-8'))
+        json_data = json.loads(request.data, encoding='utf-8')
         result = QuestionDao.create(json_data), 201
         if result:
             return result

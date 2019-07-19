@@ -38,7 +38,7 @@ class Question(Resource):
         :param _id: id of question to update.
         :return: updated question.
         """
-        json_data = json.loads(request.data.decode('utf-8'))
+        json_data = json.loads(request.data, encoding='utf-8')
         result = QuestionDao.update(_id, json_data), 200
         if result:
             return result
