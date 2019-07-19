@@ -12,4 +12,4 @@ api = Api(app)
 
 API_BASE_URL = '/api/polls'
 
-from .controller import questions_controller, question_controller
+from .controller import *

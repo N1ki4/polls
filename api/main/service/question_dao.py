@@ -13,7 +13,7 @@ class QuestionDao:  # probably have to add a time of creation
     collection_name = 'questions'
 
     @staticmethod
-    def get_all() -> Iterator:
+    def get_all_questions() -> Iterator:
         """
         Gets all questions in database.
 
@@ -22,7 +22,7 @@ class QuestionDao:  # probably have to add a time of creation
         return Database.find_all(QuestionDao.collection_name)
 
     @staticmethod
-    def get_by_id(_id: str) -> dict:
+    def get_question_by_id(_id: str) -> dict:
         """
         Gets question by its id.
 
@@ -31,6 +31,18 @@ class QuestionDao:  # probably have to add a time of creation
         """
         return Database.find_one(QuestionDao.collection_name,
                                  {'_id': ObjectId(_id)})
+
+    @staticmethod
+    def get_choice_by_id(q_id: str, c_id: int) -> dict:
+        """
+        Gets choice by question id and choice id.
+
+        :param q_id: str of question id.
+        :param c_id: int of choice id.
+        :return: choice as dict.
+        """
+        c_list = QuestionDao.get_question_by_id(q_id).get('choices')
+        return next((item for item in c_list if item['_id'] == c_id), None)
 
     @staticmethod
     def create(data: dict) -> dict:

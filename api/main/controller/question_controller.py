@@ -10,22 +10,22 @@ from api.main.util.dto import QuestionDto
 question_fields = QuestionDto.question_fields
 
 
-@api.route(API_BASE_URL + '/questions/<string:_id>')
-@api.param('_id', 'The question identifier')
+@api.route(API_BASE_URL + '/questions/<string:q_id>')
+@api.param('q_id', 'The question identifier')
 class Question(Resource):
     """
     A class for managing question.
     """
 
     @api.marshal_with(question_fields)
-    def get(self, _id: str) -> dict:
+    def get(self, q_id: str) -> dict:
         """
         Gets question by its id.
 
-        :param _id: id of question to get.
+        :param q_id: id of question to get.
         :return: question.
         """
-        result = QuestionDao.get_by_id(_id)
+        result = QuestionDao.get_question_by_id(q_id)
         if result:
             return result
         api.abort(400)
