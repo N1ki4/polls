@@ -28,3 +28,7 @@ class Choice(Resource):
         if result:
             return result
         api.abort(400)
+
+    @api.marshal_with(choice_fields)
+    def patch(self, q_id: str, c_id: int) -> dict:
+        pass

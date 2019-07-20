@@ -31,28 +31,28 @@ class Question(Resource):
         api.abort(400)
 
     @api.marshal_with(question_fields, code=200)
-    def patch(self, _id: str) -> tuple:
+    def patch(self, q_id: str) -> tuple:
         """
         Partly updates question by its id.
 
-        :param _id: id of question to update.
+        :param q_id: id of question to update.
         :return: updated question.
         """
         json_data = json.loads(request.data, encoding='utf-8')
-        result = QuestionDao.update(_id, json_data), 200
+        result = QuestionDao.update(q_id, json_data), 200
         if result:
             return result
         api.abort(400)
 
     @api.marshal_with(question_fields, code=204)
-    def delete(self, _id: str):
+    def delete(self, q_id: str):
         """
         Deletes question by its id.
 
-        :param _id: id of question to delete.
+        :param q_id: id of question to delete.
         :return: 204 status code.
         """
-        result = QuestionDao.delete(_id), 204
+        result = QuestionDao.delete(q_id), 204
         if result:
             return '', 204
         api.abort(400)
