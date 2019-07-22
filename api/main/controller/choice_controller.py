@@ -29,8 +29,8 @@ class Choice(Resource):
             return result
         api.abort(400)
 
-   # @api.marshal_with(choice_fields)
-    def patch(self, q_id: str, c_id: int) -> dict:
+    @api.marshal_with(choice_fields)
+    def post(self, q_id: str, c_id: int) -> dict:
         """
         Apply vote method on choice
         :param q_id: question id.
