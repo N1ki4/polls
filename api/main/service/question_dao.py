@@ -6,7 +6,7 @@ from ..model.db_exception import DatabaseException
 from ..model.mongodb import Database
 
 
-class QuestionDao:  # probably have to add a time of creation
+class QuestionDao:
     """
     A class for question objects.
     """
@@ -76,6 +76,26 @@ class QuestionDao:  # probably have to add a time of creation
             return result
         else:
             raise DatabaseException
+
+    @staticmethod
+    def vote(q_id: str, c_id: int):
+        """
+        Add plus 1 to the vote field of the choice.
+        
+        :params - question ID, choice ID
+        :return updated vote field of choice
+        """
+        choice = QuestionDao.get_choice_by_id(q_id, c_id)
+        data = {'choices.$': {'_id': choice['_id'], 'text': choice['text'],
+                             'votes': choice['votes'] + 1}}
+        result = Database.update_one(QuestionDao.collection_name, q_id, data,
+                                     extra_params={'choices._id': choice['_id']})
+        if result:
+            result['_id'] = str(result['_id'])
+            return result
+        else:
+            raise DatabaseException
+        
 
     @staticmethod
     def delete(_id: str) -> dict:
