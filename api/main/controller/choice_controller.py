@@ -29,6 +29,15 @@ class Choice(Resource):
             return result
         api.abort(400)
 
-    @api.marshal_with(choice_fields)
+   # @api.marshal_with(choice_fields)
     def patch(self, q_id: str, c_id: int) -> dict:
-        pass
+        """
+        Apply vote method on choice
+        :param q_id: question id.
+        :param c_id: choice id.
+        :return: choice with + 1 votes field.
+        """
+        result = QuestionDao.vote(q_id, c_id)
+        if result:
+            return result
+        apt.abort(400)

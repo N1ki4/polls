@@ -45,17 +45,19 @@ class Database:
         return db[collection].insert_one(data)
 
     @staticmethod
-    def update_one(collection: str, _id: str, data: dict) -> dict:
+    def update_one(collection: str, _id: str, data: dict, extra_params={}) -> dict:
         """
         Static method for partly updating a single document in the database.
 
         :param collection: name of DB collection.
         :param _id: id of document to update.
         :param data: data to update.
+        :param extra_params(empty_dict), made for updating certain field
+                                                                 of choice
         :return: updated document as dict.
         """
         return db[collection].find_one_and_update(
-            {'_id': ObjectId(_id)}, {'$set': data},
+            {'_id': ObjectId(_id), **extra_params}, {'$set': data},
             return_document=ReturnDocument.AFTER)
 
     @staticmethod
