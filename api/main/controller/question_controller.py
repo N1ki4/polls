@@ -25,7 +25,7 @@ class Question(Resource):
         :param q_id: id of question to get.
         :return: question.
         """
-        result = QuestionDao.get_question_by_id(q_id)
+        result = QuestionDao.get_by_id(q_id)
         if result:
             return result
         api.abort(400)

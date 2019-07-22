@@ -1,7 +1,7 @@
 from flask_restplus import Resource
 
 from .. import api, API_BASE_URL
-from ..service.question_dao import QuestionDao
+from ..service.choice_dao import ChoiceDao
 from ..util.dto import QuestionDto
 
 choice_fields = QuestionDto.choice_fields
@@ -24,7 +24,7 @@ class Choice(Resource):
         :param c_id: choice id.
         :return: choice.
         """
-        result = QuestionDao.get_choice_by_id(q_id, c_id)
+        result = ChoiceDao.get_by_id(q_id, c_id)
         if result:
             return result
         api.abort(400)

@@ -23,7 +23,7 @@ class QuestionsList(Resource):
 
         :return: list of questions.
         """
-        result = list(QuestionDao.get_all_questions())
+        result = list(QuestionDao.get_all())
         if result:
             return result
         api.abort(400)
