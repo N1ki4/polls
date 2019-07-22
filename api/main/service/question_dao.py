@@ -58,6 +58,7 @@ class QuestionDao:
         :param _id: id of question to update.
         :param data: data of question to update.
         :return: updated question. If DatabaseException raises, returns it.
+        :raise: DatabaseException if question couldn't be updated.
         """
         result = Database.update_one(QuestionDao.collection_name, _id, data)
         if result:
@@ -72,6 +73,7 @@ class QuestionDao:
 
         :param _id: id of question to delete.
         :return: deleted question. If DatabaseException raises, returns it.
+        :raise: DatabaseException if there isn't a question with _id.
         """
         result = Database.delete_one(QuestionDao.collection_name, _id)
         if result:
