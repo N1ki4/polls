@@ -10,7 +10,7 @@ from .. import api, API_BASE_URL
 question_fields = QuestionDto.question_fields
 
 
-@api.route(API_BASE_URL + '/questions/<string:q_id>/choices/<int:c_id>/action')
+@api.route(API_BASE_URL + '/questions/<string:q_id>/choices/<int:c_id>/vote')
 @api.param('q_id', 'The question identifier')
 @api.param('c_id', 'The choice identifier')
 class Vote(Resource):
@@ -27,5 +27,4 @@ class Vote(Resource):
         :param c_id: choice id.
         :return: updated question.
         """
-        json_data = json.loads(request.data, encoding='utf-8')
-        return ChoiceDao.vote(q_id, c_id, json_data)
+        return ChoiceDao.vote(q_id, c_id)

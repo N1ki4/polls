@@ -2,7 +2,7 @@ from typing import Iterator
 
 from bson import ObjectId
 
-from api.main import api
+from api.main import API_BASE_URL
 from ..model.db_exception import DatabaseException
 from ..model.mongodb import Database
 
@@ -44,12 +44,21 @@ class QuestionDao:
         """
         for id_, choice in enumerate(data['choices'], start=1):
             choice['_id'] = id_
+            choice['votes'] = 0
         result = Database.insert_one(QuestionDao.collection_name, data)
         if result.acknowledged:
-            data.update({'_id': result.inserted_id})
-            return data
+            ch_list = QuestionDao.get_by_id(result.inserted_id)['choices']
+            for ch in ch_list:
+                ch['vote_link'] = QuestionDao.create_vote_link(
+                    result.inserted_id, ch)
+            return QuestionDao.update(result.inserted_id, {'choices': ch_list})
         else:
             raise DatabaseException
+
+    @staticmethod
+    def create_vote_link(q_id: str, choice: dict) -> str:
+        return 'http://127.0.0.1:5000' + API_BASE_URL + '/questions/' + \
+               f'{q_id}' + f'/choices/{choice.get("_id")}' + '/vote'
 
     @staticmethod
     def update(_id: str, data: dict) -> dict:
@@ -61,17 +70,12 @@ class QuestionDao:
         :return: updated question. If DatabaseException raises, returns it.
         :raise: DatabaseException if question couldn't be updated.
         """
-        choices = QuestionDao.get_by_id(_id).get('choices')
-        for ch in choices:
-            if ch['votes'] == 0:
-                result = Database.update_one(QuestionDao.collection_name, _id,
-                                             data)
-                if result:
-                    return result
-                else:
-                    raise DatabaseException
-            else:
-                api.abort(401)
+        result = Database.update_one(QuestionDao.collection_name, _id,
+                                     data)
+        if result:
+            return result
+        else:
+            raise DatabaseException
 
     @staticmethod
     def delete(_id: str) -> dict:

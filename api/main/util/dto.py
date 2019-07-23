@@ -14,6 +14,7 @@ class QuestionDto:
         '_id': fields.Integer(readonly=True),
         'text': fields.String(required=True),
         'votes': fields.Integer(default=0),
+        'vote_link': fields.String(default=''),
     })
 
     question_fields = api.model('Question', {
