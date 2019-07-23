@@ -33,15 +33,9 @@ class ChoiceDao:
         n_votes = ChoiceDao.get_by_id(q_id, c_id).get('votes')
         ch_list = QuestionDao.get_by_id(q_id).get('choices')
         if json_data.get('action') == 'vote':
-            for ch in ch_list:
-                if ch['_id'] == c_id:
-                    ch.update((k, n_votes + 1) for k, v in ch.items() if
-                              k == 'votes')
+            ch_list[c_id - 1].update({'votes': n_votes + 1})
         if json_data.get('action') == 'undo':
-            for ch in ch_list:
-                if ch['_id'] == c_id:
-                    ch.update((k, n_votes - 1) for k, v in ch.items() if
-                              k == 'votes')
+            ch_list[c_id - 1].update({'votes': n_votes - 1})
         result = QuestionDao.update(q_id, {'choices': ch_list})
         if result:
             return result
