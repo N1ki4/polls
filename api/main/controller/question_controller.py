@@ -42,7 +42,7 @@ class Question(Resource):
         result = QuestionDao.update(q_id, json_data), 200
         if result:
             return result
-        api.abort(400)
+        api.abort(401)
 
     @api.marshal_with(question_fields, code=204)
     def delete(self, q_id: str):

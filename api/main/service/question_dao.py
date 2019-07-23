@@ -2,6 +2,7 @@ from typing import Iterator
 
 from bson import ObjectId
 
+from api.main import api
 from ..model.db_exception import DatabaseException
 from ..model.mongodb import Database
 
@@ -60,11 +61,17 @@ class QuestionDao:
         :return: updated question. If DatabaseException raises, returns it.
         :raise: DatabaseException if question couldn't be updated.
         """
-        result = Database.update_one(QuestionDao.collection_name, _id, data)
-        if result:
-            return result
-        else:
-            raise DatabaseException
+        choices = QuestionDao.get_by_id(_id).get('choices')
+        for ch in choices:
+            if ch['votes'] == 0:
+                result = Database.update_one(QuestionDao.collection_name, _id,
+                                             data)
+                if result:
+                    return result
+                else:
+                    raise DatabaseException
+            else:
+                api.abort(401)
 
     @staticmethod
     def delete(_id: str) -> dict:
