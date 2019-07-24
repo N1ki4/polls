@@ -46,6 +46,8 @@ class QuestionDao:
         for id_, choice in enumerate(data['choices'], start=1):
             choice['_id'] = id_
             choice['votes'] = 0
+            choice['rate'] = 0
+            choice['rate_count'] = 0
         data.update({'date_time': datetime.now()})
         result = Database.insert_one(QuestionDao.collection_name, data)
         if result.acknowledged:

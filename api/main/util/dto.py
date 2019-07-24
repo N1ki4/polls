@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask_restplus import fields
 
 from .. import api
@@ -16,11 +15,13 @@ class QuestionDto:
         'text': fields.String(required=True),
         'votes': fields.Integer(default=0),
         'vote_link': fields.String(default=''),
+        'rate': fields.Float(default=0),
+        'rate_count': fields.Integer(default=0)
     })
 
     question_fields = api.model('Question', {
         '_id': fields.String(readonly=True),
         'text': fields.String(required=True),
         'date_time': fields.DateTime(dt_format='rfc822'),
-        'choices': fields.List(fields.Nested(choice_fields), required=True),
+        'choices': fields.List(fields.Nested(choice_fields), required=True)
     })

@@ -1,6 +1,3 @@
-import json
-
-from flask import request
 from flask_restplus import Resource
 
 from api.main.service.choice_dao import ChoiceDao

@@ -37,3 +37,15 @@ class ChoiceDao:
             return result
         else:
             raise DatabaseException
+
+    @staticmethod
+    def rate_choice(q_id: str, c_id: int, rate: float) -> dict:
+        ch_list = QuestionDao.get_by_id(q_id).get('choices')
+        rate_count = ch_list[c_id - 1].get('rate_count') + 1
+        rate_ = ch_list[c_id - 1].get('rate') + rate
+        ch_list[c_id - 1].update({'rate_count': rate_count})
+        if rate_count > 2:
+            ch_list[c_id - 1].update({'rate': round((rate_ / 2), 2)})
+        else:
+            ch_list[c_id - 1].update({'rate': round((rate_ / rate_count), 2)})
+        return QuestionDao.update(q_id, {'choices': ch_list})
