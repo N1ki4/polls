@@ -39,7 +39,7 @@ class Question(Resource):
         :return: updated question.
         """
         json_data = json.loads(request.data, encoding='utf-8')
-        result = QuestionDao.update(q_id, json_data), 200
+        result = QuestionDao.update_for_patch(q_id, json_data), 200
         if result:
             return result
         api.abort(401)

@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_restplus import fields
 
 from .. import api
@@ -20,5 +21,6 @@ class QuestionDto:
     question_fields = api.model('Question', {
         '_id': fields.String(readonly=True),
         'text': fields.String(required=True),
-        'choices': fields.List(fields.Nested(choice_fields), required=True)
+        'date_time': fields.DateTime(dt_format='rfc822'),
+        'choices': fields.List(fields.Nested(choice_fields), required=True),
     })

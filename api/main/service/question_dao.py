@@ -1,8 +1,9 @@
 from typing import Iterator
 
 from bson import ObjectId
+from datetime import datetime, timedelta
 
-from api.main import API_BASE_URL
+from api.main import API_BASE_URL, api
 from ..model.db_exception import DatabaseException
 from ..model.mongodb import Database
 
@@ -45,6 +46,7 @@ class QuestionDao:
         for id_, choice in enumerate(data['choices'], start=1):
             choice['_id'] = id_
             choice['votes'] = 0
+        data.update({'date_time': datetime.now()})
         result = Database.insert_one(QuestionDao.collection_name, data)
         if result.acknowledged:
             ch_list = QuestionDao.get_by_id(result.inserted_id)['choices']
@@ -70,8 +72,30 @@ class QuestionDao:
         :return: updated question. If DatabaseException raises, returns it.
         :raise: DatabaseException if question couldn't be updated.
         """
-        result = Database.update_one(QuestionDao.collection_name, _id,
-                                     data)
+        result = Database.update_one(QuestionDao.collection_name, _id, data)
+        if result:
+            return result
+        else:
+            raise DatabaseException
+
+    @staticmethod
+    def update_for_patch(_id: str, data: dict) -> dict:
+        """
+        Updates question data by its id for patch method checking time of
+        creation.
+
+        :param _id: id of question to update.
+        :param data: data of question to update.
+        :return: updated question. If DatabaseException raises, returns it.
+        :raise: DatabaseException if question couldn't be updated.
+        """
+        result = None
+        question = QuestionDao.get_by_id(_id)
+        if datetime.now() - question['date_time'] <= timedelta(seconds=10):
+            result = Database.update_one(QuestionDao.collection_name, _id,
+                                         data)
+        else:
+            api.abort(401)
         if result:
             return result
         else:
