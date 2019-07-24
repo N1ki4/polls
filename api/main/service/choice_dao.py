@@ -40,6 +40,14 @@ class ChoiceDao:
 
     @staticmethod
     def rate_choice(q_id: str, c_id: int, rate: float) -> dict:
+        """
+        Rates choice in question by its id.
+
+        :param q_id: question id.
+        :param c_id: choice id.
+        :param rate: new rate of choice.
+        :return: question with choice's updated rate.
+        """
         ch_list = QuestionDao.get_by_id(q_id).get('choices')
         rate_count = ch_list[c_id - 1].get('rate_count') + 1
         rate_ = ch_list[c_id - 1].get('rate') + rate

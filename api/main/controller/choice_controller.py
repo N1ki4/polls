@@ -32,6 +32,13 @@ class Choice(Resource):
 
     @api.marshal_with(question_fields)
     def post(self, q_id: str, c_id: int) -> dict:
+        """
+        Posts rate of choice as query string.
+
+        :param q_id: question id.
+        :param c_id: choice id.
+        :return: question with rated choice.
+        """
         parser = reqparse.RequestParser()
         parser.add_argument('rate', type=float)
         args = parser.parse_args()
