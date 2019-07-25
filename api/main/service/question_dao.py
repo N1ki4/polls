@@ -3,7 +3,7 @@ from typing import Iterator
 
 from bson import ObjectId
 
-from api.main import API_BASE_URL, api
+from api.main import api
 from ..model.db_exception import DatabaseException
 from ..model.mongodb import Database
 
@@ -51,18 +51,9 @@ class QuestionDao:
         data.update({'date_time': datetime.now()})
         result = Database.insert_one(QuestionDao.collection_name, data)
         if result.acknowledged:
-            ch_list = QuestionDao.get_by_id(result.inserted_id)['choices']
-            for ch in ch_list:
-                ch['vote_link'] = QuestionDao.create_vote_link(
-                    result.inserted_id, ch)
-            return QuestionDao.update(result.inserted_id, {'choices': ch_list})
+            return data
         else:
             raise DatabaseException
-
-    @staticmethod
-    def create_vote_link(q_id: str, choice: dict) -> str:
-        return 'http://127.0.0.1:5000' + API_BASE_URL + '/questions/' + \
-               f'{q_id}' + f'/choices/{choice.get("_id")}' + '/vote'
 
     @staticmethod
     def update(_id: str, data: dict) -> dict:
