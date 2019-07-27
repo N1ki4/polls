@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Iterator
 
 from bson import ObjectId
@@ -84,9 +84,8 @@ class QuestionDao:
         """
         result = None
         question = QuestionDao.get_by_id(_id)
-        if datetime.now() - question['date_time'] <= timedelta(seconds=10):
-            result = Database.update_one(QuestionDao.collection_name, _id,
-                                         data)
+        if all(choice.get('votes') == 0 for choice in question['choices']):
+            result = Database.update_one(QuestionDao.collection_name, _id, data)
         else:
             api.abort(401)
         if result:
