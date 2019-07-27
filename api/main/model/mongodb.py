@@ -2,9 +2,9 @@ from typing import Iterator
 
 from bson import ObjectId
 from pymongo import ReturnDocument
-from pymongo.results import InsertOneResult
+from pymongo.results import InsertOneResult, DeleteResult
 
-from .. import db
+from .. import db, client
 
 
 class Database:
@@ -61,7 +61,7 @@ class Database:
             return_document=ReturnDocument.AFTER)
 
     @staticmethod
-    def delete_one(collection: str, _id: str) -> dict:
+    def delete_one(collection: str, _id: str) -> DeleteResult:
         """
         Static method for deleting a single document in the database.
 
@@ -69,4 +69,4 @@ class Database:
         :param _id: id of document to delete.
         :return: deleted document.
         """
-        return db[collection].find_one_and_delete({'_id': ObjectId(_id)})
+        return db[collection].delete_one({'_id': ObjectId(_id)})

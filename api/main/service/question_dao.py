@@ -103,8 +103,11 @@ class QuestionDao:
         :return: deleted question. If DatabaseException raises, returns it.
         :raise: DatabaseException if there isn't a question with _id.
         """
-        result = Database.delete_one(QuestionDao.collection_name, _id)
-        if result:
-            return result
-        else:
-            raise DatabaseException
+        try:
+            result = Database.delete_one(QuestionDao.collection_name, _id)
+            if result.deleted_count == 1:
+                return result.raw_result
+            else:
+                raise DatabaseException(f'There is no question with {_id} _id.')
+        except Exception as e:
+            raise DatabaseException(e)
