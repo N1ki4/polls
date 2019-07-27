@@ -15,10 +15,13 @@ class ChoiceDao:
         :return: choice as dict.
         """
         c_list = QuestionDao.get_by_id(q_id).get('choices')
-        return next((item for item in c_list if item['_id'] == c_id), None)
+        try:
+            return next((item for item in c_list if item['_id'] == c_id), None)
+        except Exception as e:
+            raise DatabaseException(e)
 
     @staticmethod
-    def vote(q_id: str, c_id: int) -> dict:
+    def vote(q_id: str, c_id: int):
         """
         Votes for choice in question by its id.
         If "action" in body is "vote" - increase number of votes by 1.
@@ -29,17 +32,16 @@ class ChoiceDao:
         :return: question as dict.
         :raise: DatabaseException if question couldn't be updated.
         """
-        n_votes = ChoiceDao.get_by_id(q_id, c_id).get('votes')
         ch_list = QuestionDao.get_by_id(q_id).get('choices')
-        ch_list[c_id - 1].update({'votes': n_votes + 1})
-        result = QuestionDao.update(q_id, {'choices': ch_list})
-        if result:
-            return result
+        if c_id > len(ch_list):
+            raise DatabaseException('No choice with this id')
         else:
-            raise DatabaseException
+            n_votes = ChoiceDao.get_by_id(q_id, c_id).get('votes')
+            ch_list[c_id - 1].update({'votes': n_votes + 1})
+            QuestionDao.update(q_id, {'choices': ch_list})
 
     @staticmethod
-    def rate_choice(q_id: str, c_id: int, rate: float) -> dict:
+    def rate_choice(q_id: str, c_id: int, rate: float):
         """
         Rates choice in question by its id.
 
@@ -49,11 +51,14 @@ class ChoiceDao:
         :return: question with choice's updated rate.
         """
         ch_list = QuestionDao.get_by_id(q_id).get('choices')
-        rate_count = ch_list[c_id - 1].get('rate_count') + 1
-        rate_ = ch_list[c_id - 1].get('rate') + rate
-        ch_list[c_id - 1].update({'rate_count': rate_count})
-        if rate_count > 2:
-            ch_list[c_id - 1].update({'rate': round((rate_ / 2), 2)})
+        if c_id > len(ch_list):
+            raise DatabaseException('No choice with this id')
         else:
-            ch_list[c_id - 1].update({'rate': round((rate_ / rate_count), 2)})
-        return QuestionDao.update(q_id, {'choices': ch_list})
+            rate_count = ch_list[c_id - 1].get('rate_count') + 1
+            rate_ = ch_list[c_id - 1].get('rate') + rate
+            ch_list[c_id - 1].update({'rate_count': rate_count})
+            if rate_count > 2:
+                ch_list[c_id - 1].update({'rate': round((rate_ / 2), 2)})
+            else:
+                ch_list[c_id - 1].update({'rate': round((rate_ / rate_count), 2)})
+            QuestionDao.update(q_id, {'choices': ch_list})

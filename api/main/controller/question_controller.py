@@ -18,21 +18,21 @@ class Question(Resource):
     A class for managing question.
     """
 
-    @api.marshal_with(question_fields)
-    def get(self, q_id: str) -> dict:
+    @api.marshal_with(question_fields, code=200)
+    def get(self, q_id: str) -> tuple:
         """
         Gets question by its id.
 
         :param q_id: id of question to get.
         :return: question.
         """
-        result = QuestionDao.get_by_id(q_id)
-        if result:
-            return result
-        api.abort(400)
+        try:
+            return QuestionDao.get_by_id(q_id), 200
+        except DatabaseException as e:
+            api.abort(400, e)
 
-    @api.marshal_with(question_fields, code=200)
-    def patch(self, q_id: str) -> tuple:
+    @staticmethod
+    def patch(q_id: str) -> tuple:
         """
         Partly updates question by its id.
 
@@ -40,13 +40,13 @@ class Question(Resource):
         :return: updated question.
         """
         json_data = json.loads(request.data, encoding='utf-8')
-        result = QuestionDao.update_for_patch(q_id, json_data), 200
-        if result:
-            return result
-        api.abort(401)
+        try:
+            return QuestionDao.update_for_patch(q_id, json_data), 204
+        except DatabaseException as e:
+            api.abort(400, e)
 
-    # @api.marshal_with(question_fields, code=204)
-    def delete(self, q_id: str):
+    @staticmethod
+    def delete(q_id: str) -> tuple:
         """
         Deletes question by its id.
 

@@ -1,5 +1,6 @@
 from flask_restplus import Resource
 
+from api.main.model.db_exception import DatabaseException
 from api.main.service.choice_dao import ChoiceDao
 from api.main.util.dto import QuestionDto
 from .. import api, API_BASE_URL
@@ -15,13 +16,16 @@ class Vote(Resource):
     A class for voting.
     """
 
-    @api.marshal_with(question_fields)
-    def post(self, q_id: str, _id: int):
+    @staticmethod
+    def post(q_id: str, _id: int) -> tuple:
         """
-        Votes or undo voting for choice in question.
+        Votes for choice in question.
 
         :param q_id: question id.
         :param _id: choice id.
         :return: updated question.
         """
-        return ChoiceDao.vote(q_id, _id)
+        try:
+            return ChoiceDao.vote(q_id, _id), 204
+        except DatabaseException as e:
+            api.abort(400, e)

@@ -3,7 +3,6 @@ from typing import Iterator
 
 from bson import ObjectId
 
-from api.main import api
 from ..model.db_exception import DatabaseException
 from ..model.mongodb import Database
 
@@ -21,7 +20,10 @@ class QuestionDao:
 
         :return: Iterator of all questions in collection.
         """
-        return Database.find_all(QuestionDao.collection_name)
+        try:
+            return Database.find_all(QuestionDao.collection_name)
+        except Exception as e:
+            raise DatabaseException(e)
 
     @staticmethod
     def get_by_id(_id: str) -> dict:
@@ -31,8 +33,11 @@ class QuestionDao:
         :param _id: str id of question.
         :return: question as dict.
         """
-        return Database.find_one(QuestionDao.collection_name,
-                                 {'_id': ObjectId(_id)})
+        try:
+            return Database.find_one(QuestionDao.collection_name,
+                                     {'_id': ObjectId(_id)})
+        except Exception as e:
+            raise DatabaseException(e)
 
     @staticmethod
     def create(data: dict) -> dict:
@@ -43,17 +48,18 @@ class QuestionDao:
         :return: question as dict if question was created.
         :raise: DatabaseException if question couldn't be created.
         """
-        for id_, choice in enumerate(data['choices'], start=1):
-            choice['_id'] = id_
-            choice['votes'] = 0
-            choice['rate'] = 0
-            choice['rate_count'] = 0
-        data.update({'date_time': datetime.now()})
-        result = Database.insert_one(QuestionDao.collection_name, data)
-        if result.acknowledged:
-            return data
-        else:
-            raise DatabaseException
+        try:
+            for id_, choice in enumerate(data['choices'], start=1):
+                choice['_id'] = id_
+                choice['votes'] = 0
+                choice['rate'] = 0
+                choice['rate_count'] = 0
+            data.update({'date_time': datetime.utcnow()})
+            result = Database.insert_one(QuestionDao.collection_name, data)
+            if result.acknowledged:
+                return data
+        except Exception as e:
+            raise DatabaseException(e)
 
     @staticmethod
     def update(_id: str, data: dict) -> dict:
@@ -65,11 +71,12 @@ class QuestionDao:
         :return: updated question. If DatabaseException raises, returns it.
         :raise: DatabaseException if question couldn't be updated.
         """
-        result = Database.update_one(QuestionDao.collection_name, _id, data)
-        if result:
-            return result
-        else:
-            raise DatabaseException
+        try:
+            result = Database.update_one(QuestionDao.collection_name, _id, data)
+            if result.acknowledged:
+                return result.raw_result
+        except Exception as e:
+            raise DatabaseException(e)
 
     @staticmethod
     def update_for_patch(_id: str, data: dict) -> dict:
@@ -82,16 +89,18 @@ class QuestionDao:
         :return: updated question. If DatabaseException raises, returns it.
         :raise: DatabaseException if question couldn't be updated.
         """
-        result = None
-        question = QuestionDao.get_by_id(_id)
-        if all(choice.get('votes') == 0 for choice in question['choices']):
-            result = Database.update_one(QuestionDao.collection_name, _id, data)
-        else:
-            api.abort(401)
-        if result:
-            return result
-        else:
-            raise DatabaseException
+        try:
+            question = QuestionDao.get_by_id(_id)
+            if all(choice.get('votes') == 0 for choice in question['choices']):
+                result = Database.update_one(QuestionDao.collection_name, _id,
+                                             data)
+                if result.modified_count == 1:
+                    return result.raw_result
+            else:
+                raise DatabaseException("Access denied to change question "
+                                        "after someone have voted.")
+        except Exception as e:
+            raise DatabaseException(e)
 
     @staticmethod
     def delete(_id: str) -> dict:
@@ -107,6 +116,7 @@ class QuestionDao:
             if result.deleted_count == 1:
                 return result.raw_result
             else:
-                raise DatabaseException(f'There is no question with {_id} _id.')
+                raise DatabaseException(
+                    f'There is no question with {_id} _id.')
         except Exception as e:
             raise DatabaseException(e)
