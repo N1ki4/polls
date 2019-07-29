@@ -72,7 +72,8 @@ class QuestionDao:
         :raise: DatabaseException if question couldn't be updated.
         """
         try:
-            result = Database.update_one(QuestionDao.collection_name, _id, data)
+            result = Database.update_one(QuestionDao.collection_name, _id,
+                                         data)
             if result.acknowledged:
                 return result.raw_result
         except Exception as e:

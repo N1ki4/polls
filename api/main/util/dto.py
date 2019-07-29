@@ -24,7 +24,8 @@ class QuestionDto:
         'text': fields.String(required=True),
         'date_time': fields.DateTime(dt_format='rfc822'),
         'choices': fields.List(fields.Nested(choice_fields),
-                               attribute=lambda x: [dict(**choice, q_id=x['_id'])
-                                                    for choice in x['choices']],
+                               attribute=lambda x:
+                               [dict(**choice, q_id=x['_id'])
+                                for choice in x['choices']],
                                required=True)
     })

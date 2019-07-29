@@ -24,8 +24,6 @@ class ChoiceDao:
     def vote(q_id: str, c_id: int):
         """
         Votes for choice in question by its id.
-        If "action" in body is "vote" - increase number of votes by 1.
-        If "action" in body is "undo" - decrease number of votes by 1.
 
         :param q_id: question id.
         :param c_id: choice id.
@@ -34,7 +32,7 @@ class ChoiceDao:
         """
         ch_list = QuestionDao.get_by_id(q_id).get('choices')
         if c_id > len(ch_list):
-            raise DatabaseException('No choice with this id')
+            raise DatabaseException('No choice with this id.')
         else:
             n_votes = ChoiceDao.get_by_id(q_id, c_id).get('votes')
             ch_list[c_id - 1].update({'votes': n_votes + 1})
@@ -52,7 +50,7 @@ class ChoiceDao:
         """
         ch_list = QuestionDao.get_by_id(q_id).get('choices')
         if c_id > len(ch_list):
-            raise DatabaseException('No choice with this id')
+            raise DatabaseException('No choice with this id.')
         else:
             rate_count = ch_list[c_id - 1].get('rate_count') + 1
             rate_ = ch_list[c_id - 1].get('rate') + rate
@@ -60,5 +58,6 @@ class ChoiceDao:
             if rate_count > 2:
                 ch_list[c_id - 1].update({'rate': round((rate_ / 2), 2)})
             else:
-                ch_list[c_id - 1].update({'rate': round((rate_ / rate_count), 2)})
+                ch_list[c_id - 1].update(
+                    {'rate': round((rate_ / rate_count), 2)})
             QuestionDao.update(q_id, {'choices': ch_list})
