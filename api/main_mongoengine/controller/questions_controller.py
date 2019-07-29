@@ -28,7 +28,6 @@ class QuestionsList(Resource):
             api.abort(400, e)
 
     @api.expect(question_fields, validate=True)
-    @api.marshal_with(question_fields, code=201)
     def post(self) -> tuple:
         """
         Creates new question.
@@ -36,8 +35,7 @@ class QuestionsList(Resource):
 
         :return: question if question was created.
         """
-        json_data = request.json
         try:
-            return QuestionDao.create(json_data), 201
+            return QuestionDao.create(), 201
         except DatabaseException as e:
             api.abort(400, e)

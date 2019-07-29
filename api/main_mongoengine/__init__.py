@@ -10,6 +10,6 @@ connection = connect('polls')
 app = Flask(__name__)
 api = Api(app)
 
-API_BASE_URL = '/api/polls'
+API_BASE_URL = '/api'
 
 from .controller import *

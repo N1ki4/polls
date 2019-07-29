@@ -13,9 +13,8 @@ class Choice(EmbeddedDocument):
 
 
 class Question(Document):
-    _id = StringField(required=True)
     text = StringField(required=True)
     date_time = DateTimeField(default=datetime.utcnow)
-    choices = ListField(EmbeddedDocumentField(Choice))
+    choices = (EmbeddedDocumentListField(Choice))
 
     meta = {'collection': 'questions'}
