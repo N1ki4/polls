@@ -1,3 +1,5 @@
+import json
+
 from flask import request
 from flask_restplus import Resource
 
@@ -35,7 +37,8 @@ class QuestionsList(Resource):
 
         :return: question if question was created.
         """
+        json_data = json.loads(request.data)
         try:
-            return QuestionDao.create(), 201
+            return QuestionDao.create(json_data), 201
         except DatabaseException as e:
             api.abort(400, e)
