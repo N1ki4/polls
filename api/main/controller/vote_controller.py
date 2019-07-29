@@ -23,7 +23,7 @@ class Vote(Resource):
 
         :param q_id: question id.
         :param _id: choice id.
-        :return: updated question.
+        :return: HTTP status code with empty body.
         """
         try:
             return ChoiceDao.vote(q_id, _id), 204
