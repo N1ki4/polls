@@ -37,7 +37,7 @@ class Question(Resource):
         Partly updates question by its id.
 
         :param q_id: id of question to update.
-        :return: updated question.
+        :return: HTTP status code without body.
         """
         json_data = json.loads(request.data, encoding='utf-8')
         try:
@@ -51,7 +51,7 @@ class Question(Resource):
         Deletes question by its id.
 
         :param q_id: id of question to delete.
-        :return: 204 status code.
+        :return: HTTP status code without body.
         """
         try:
             return QuestionDao.delete(q_id), 204

@@ -34,7 +34,7 @@ class QuestionsList(Resource):
         Creates new question.
         If question wasn't created, sends 400 error.
 
-        :return: question if question was created.
+        :return: created question.
         """
         json_data = request.json
         try:
