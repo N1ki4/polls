@@ -3,10 +3,10 @@ import json
 from flask import request
 from flask_restplus import Resource
 
-from api.main import api, API_BASE_URL
-from api.main.model.db_exception import DatabaseException
-from api.main.service.question_dao import QuestionDao
-from api.main.util.dto import QuestionDto
+from .. import api, API_BASE_URL
+from ..model.db_exception import DatabaseException
+from ..service.question_dao import QuestionDao
+from ..util.dto import QuestionDto
 
 question_fields = QuestionDto.question_fields
 

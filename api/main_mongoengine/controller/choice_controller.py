@@ -1,6 +1,6 @@
 from flask_restplus import Resource, reqparse
 
-from api.main.model.db_exception import DatabaseException
+from ..model.db_exception import DatabaseException
 from .. import api, API_BASE_URL
 from ..service.choice_dao import ChoiceDao
 from ..util.dto import QuestionDto

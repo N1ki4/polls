@@ -1,11 +1,11 @@
 from flask import Flask
 from flask_restplus import Api
-from pymongo import MongoClient
+from mongoengine import connect
 
 from .config import config_by_name
 
-client = MongoClient()
-db = client['polls']
+
+connection = connect('polls')
 
 app = Flask(__name__)
 api = Api(app)

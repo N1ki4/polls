@@ -1,5 +1,5 @@
-from api.main.model.db_exception import DatabaseException
-from api.main.service.question_dao import QuestionDao
+from ..model.db_exception import DatabaseException
+from ..service.question_dao import QuestionDao
 
 
 class ChoiceDao:

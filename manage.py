@@ -1,6 +1,6 @@
 import unittest
 
-from api.main import app
+from api.main_mongoengine import app
 
 app.app_context().push()
 

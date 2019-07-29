@@ -1,8 +1,8 @@
 from flask_restplus import Resource
 
-from api.main.model.db_exception import DatabaseException
-from api.main.service.choice_dao import ChoiceDao
-from api.main.util.dto import QuestionDto
+from ..model.db_exception import DatabaseException
+from ..service.choice_dao import ChoiceDao
+from ..util.dto import QuestionDto
 from .. import api, API_BASE_URL
 
 question_fields = QuestionDto.question_fields

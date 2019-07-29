@@ -4,7 +4,6 @@ from typing import Iterator
 from bson import ObjectId
 
 from ..model.db_exception import DatabaseException
-from ..model.mongodb import Database
 
 
 class QuestionDao:

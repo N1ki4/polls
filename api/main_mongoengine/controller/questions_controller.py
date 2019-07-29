@@ -1,9 +1,9 @@
 from flask import request
 from flask_restplus import Resource
 
-from api.main.model.db_exception import DatabaseException
+from ..model.db_exception import DatabaseException
 from .. import api, API_BASE_URL
-from ..service.question_dao import QuestionDao
+from ..service.mongoengine_question import QuestionDao
 from ..util.dto import QuestionDto
 
 question_fields = QuestionDto.question_fields
