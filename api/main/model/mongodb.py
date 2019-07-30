@@ -1,8 +1,7 @@
 from typing import Iterator
 
 from bson import ObjectId
-from pymongo import ReturnDocument
-from pymongo.results import InsertOneResult
+from pymongo.results import InsertOneResult, DeleteResult, UpdateResult
 
 from .. import db
 
@@ -45,7 +44,7 @@ class Database:
         return db[collection].insert_one(data)
 
     @staticmethod
-    def update_one(collection: str, _id: str, data: dict) -> dict:
+    def update_one(collection: str, _id: str, data: dict) -> UpdateResult:
         """
         Static method for partly updating a single document in the database.
 
@@ -54,12 +53,11 @@ class Database:
         :param data: data to update.
         :return: updated document as dict.
         """
-        return db[collection].find_one_and_update(
-            {'_id': ObjectId(_id)}, {'$set': data},
-            return_document=ReturnDocument.AFTER)
+        return db[collection].update_one({'_id': ObjectId(_id)},
+                                         {'$set': data})
 
     @staticmethod
-    def delete_one(collection: str, _id: str) -> dict:
+    def delete_one(collection: str, _id: str) -> DeleteResult:
         """
         Static method for deleting a single document in the database.
 
@@ -67,4 +65,4 @@ class Database:
         :param _id: id of document to delete.
         :return: deleted document.
         """
-        return db[collection].find_one_and_delete({'_id': ObjectId(_id)})
+        return db[collection].delete_one({'_id': ObjectId(_id)})
