@@ -13,7 +13,7 @@ class QuestionDto:
     choice_fields = api.model('Choice', {
         '_id': fields.Integer(readonly=True),
         'text': fields.String(required=True),
-        'vote_link': fields.Url('vote'),
+        'vote_link': fields.Url('vote', absolute=True),
         'votes': fields.Integer(default=0),
         'rate': fields.Float(default=0),
         'rate_count': fields.Integer(default=0),
