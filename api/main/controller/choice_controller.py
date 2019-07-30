@@ -2,7 +2,7 @@ from flask_restplus import Resource, reqparse
 
 from .. import api, API_BASE_URL
 from ..model.db_exception import DatabaseException
-from ..service.choice_dao import ChoiceDao
+from ..service.choice_service import ChoiceService
 from ..util.dto import QuestionDto
 
 choice_fields = QuestionDto.choice_fields
@@ -32,6 +32,6 @@ class Choice(Resource):
             args = parser.parse_args()
             rate = args['rate']
             if isinstance(rate, float) and 0 <= rate <= 10:
-                return ChoiceDao.rate_choice(q_id, _id, rate), 204
+                return ChoiceService.rate_choice(q_id, _id, rate), 204
         except DatabaseException as e:
             api.abort(400, e)

@@ -7,7 +7,7 @@ from ..model.db_exception import DatabaseException
 from ..model.mongodb import Database
 
 
-class QuestionDao:
+class QuestionService:
     """
     A class for question objects.
     """
@@ -21,7 +21,7 @@ class QuestionDao:
         :return: Iterator of all questions in collection.
         """
         try:
-            return Database.find_all(QuestionDao.collection_name)
+            return Database.find_all(QuestionService.collection_name)
         except Exception as e:
             raise DatabaseException(e)
 
@@ -34,7 +34,7 @@ class QuestionDao:
         :return: question as dict.
         """
         try:
-            return Database.find_one(QuestionDao.collection_name,
+            return Database.find_one(QuestionService.collection_name,
                                      {'_id': ObjectId(_id)})
         except Exception as e:
             raise DatabaseException(e)
@@ -48,7 +48,7 @@ class QuestionDao:
         :return: question and its choice with its max votes.
         """
         try:
-            question = Database.find_one(QuestionDao.collection_name,
+            question = Database.find_one(QuestionService.collection_name,
                                          {'_id': ObjectId(_id)})
             question.update({'choices':
                                  [question['choices'][id_] for id_, ch in
@@ -76,7 +76,7 @@ class QuestionDao:
                 choice['rate'] = 0
                 choice['rate_count'] = 0
             data.update({'date_time': datetime.utcnow()})
-            result = Database.insert_one(QuestionDao.collection_name, data)
+            result = Database.insert_one(QuestionService.collection_name, data)
             if result.acknowledged:
                 return data
         except Exception as e:
@@ -93,7 +93,7 @@ class QuestionDao:
         :raise: DatabaseException if question couldn't be updated.
         """
         try:
-            result = Database.update_one(QuestionDao.collection_name, _id,
+            result = Database.update_one(QuestionService.collection_name, _id,
                                          data)
             if result.acknowledged:
                 return result.raw_result
@@ -112,9 +112,9 @@ class QuestionDao:
         :raise: DatabaseException if question couldn't be updated.
         """
         try:
-            question = QuestionDao.get_by_id(_id)
+            question = QuestionService.get_by_id(_id)
             if all(choice.get('votes') == 0 for choice in question['choices']):
-                result = Database.update_one(QuestionDao.collection_name, _id,
+                result = Database.update_one(QuestionService.collection_name, _id,
                                              data)
                 if result.modified_count == 1:
                     return result.raw_result
@@ -134,7 +134,7 @@ class QuestionDao:
         :raise: DatabaseException if there isn't a question with _id.
         """
         try:
-            result = Database.delete_one(QuestionDao.collection_name, _id)
+            result = Database.delete_one(QuestionService.collection_name, _id)
             if result.deleted_count == 1:
                 return result.raw_result
             else:

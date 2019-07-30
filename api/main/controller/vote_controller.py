@@ -1,7 +1,7 @@
 from flask_restplus import Resource
 
 from api.main.model.db_exception import DatabaseException
-from api.main.service.choice_dao import ChoiceDao
+from api.main.service.choice_service import ChoiceService
 from api.main.util.dto import QuestionDto
 from .. import api, API_BASE_URL
 
@@ -26,6 +26,6 @@ class Vote(Resource):
         :return: HTTP status code with empty body.
         """
         try:
-            return ChoiceDao.vote(q_id, _id), 204
+            return ChoiceService.vote(q_id, _id), 204
         except DatabaseException as e:
             api.abort(400, e)

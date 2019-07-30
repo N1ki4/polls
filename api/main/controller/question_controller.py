@@ -5,7 +5,7 @@ from flask_restplus import Resource
 
 from api.main import api, API_BASE_URL
 from api.main.model.db_exception import DatabaseException
-from api.main.service.question_dao import QuestionDao
+from api.main.service.question_service import QuestionService
 from api.main.util.dto import QuestionDto
 
 question_fields = QuestionDto.question_fields
@@ -27,7 +27,7 @@ class Question(Resource):
         :return: question.
         """
         try:
-            return QuestionDao.get_by_id(q_id), 200
+            return QuestionService.get_by_id(q_id), 200
         except DatabaseException as e:
             api.abort(400, e)
 
@@ -41,7 +41,7 @@ class Question(Resource):
         """
         json_data = json.loads(request.data, encoding='utf-8')
         try:
-            return QuestionDao.update_for_patch(q_id, json_data), 204
+            return QuestionService.update_for_patch(q_id, json_data), 204
         except DatabaseException as e:
             api.abort(400, e)
 
@@ -54,6 +54,6 @@ class Question(Resource):
         :return: HTTP status code with empty body.
         """
         try:
-            return QuestionDao.delete(q_id), 204
+            return QuestionService.delete(q_id), 204
         except DatabaseException as e:
             api.abort(400, e)

@@ -1,8 +1,8 @@
 from api.main.model.db_exception import DatabaseException
-from api.main.service.question_dao import QuestionDao
+from api.main.service.question_service import QuestionService
 
 
-class ChoiceDao:
+class ChoiceService:
     collection_name = "questions"
 
     @staticmethod
@@ -14,7 +14,7 @@ class ChoiceDao:
         :param c_id: int of choice id.
         :return: choice as dict.
         """
-        c_list = QuestionDao.get_by_id(q_id).get('choices')
+        c_list = QuestionService.get_by_id(q_id).get('choices')
         try:
             return next((item for item in c_list if item['_id'] == c_id), None)
         except Exception as e:
@@ -30,13 +30,13 @@ class ChoiceDao:
         :return: question as dict.
         :raise: DatabaseException if question couldn't be updated.
         """
-        ch_list = QuestionDao.get_by_id(q_id).get('choices')
+        ch_list = QuestionService.get_by_id(q_id).get('choices')
         if c_id > len(ch_list):
             raise DatabaseException('No choice with this id.')
         else:
-            n_votes = ChoiceDao.get_by_id(q_id, c_id).get('votes')
+            n_votes = ChoiceService.get_by_id(q_id, c_id).get('votes')
             ch_list[c_id - 1].update({'votes': n_votes + 1})
-            QuestionDao.update(q_id, {'choices': ch_list})
+            QuestionService.update(q_id, {'choices': ch_list})
 
     @staticmethod
     def rate_choice(q_id: str, c_id: int, rate: float):
@@ -48,7 +48,7 @@ class ChoiceDao:
         :param rate: new rate of choice.
         :return: question with choice's updated rate.
         """
-        ch_list = QuestionDao.get_by_id(q_id).get('choices')
+        ch_list = QuestionService.get_by_id(q_id).get('choices')
         if c_id > len(ch_list):
             raise DatabaseException('No choice with this id.')
         else:
@@ -60,4 +60,4 @@ class ChoiceDao:
             else:
                 ch_list[c_id - 1].update(
                     {'rate': round((rate_ / rate_count), 2)})
-            QuestionDao.update(q_id, {'choices': ch_list})
+            QuestionService.update(q_id, {'choices': ch_list})

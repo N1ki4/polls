@@ -1,7 +1,7 @@
 from flask_restplus import Resource
 
 from ..model.db_exception import DatabaseException
-from ..service.question_dao import QuestionDao
+from ..service.question_service import QuestionService
 from .. import api, API_BASE_URL
 from ..util.dto import QuestionDto
 
@@ -24,6 +24,6 @@ class Result(Resource):
         :return: question and its choice with max votes.
         """
         try:
-            return QuestionDao.result(q_id)
+            return QuestionService.result(q_id)
         except Exception as e:
             raise DatabaseException(e)

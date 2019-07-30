@@ -3,7 +3,7 @@ from flask_restplus import Resource
 
 from api.main.model.db_exception import DatabaseException
 from .. import api, API_BASE_URL
-from ..service.question_dao import QuestionDao
+from ..service.question_service import QuestionService
 from ..util.dto import QuestionDto
 
 question_fields = QuestionDto.question_fields
@@ -23,7 +23,7 @@ class QuestionsList(Resource):
         :return: list of questions.
         """
         try:
-            return list(QuestionDao.get_all()), 200
+            return list(QuestionService.get_all()), 200
         except DatabaseException as e:
             api.abort(400, e)
 
@@ -38,6 +38,6 @@ class QuestionsList(Resource):
         """
         json_data = request.json
         try:
-            return QuestionDao.create(json_data), 201
+            return QuestionService.create(json_data), 201
         except DatabaseException as e:
             api.abort(400, e)
