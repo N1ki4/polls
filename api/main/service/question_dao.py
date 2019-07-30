@@ -40,6 +40,27 @@ class QuestionDao:
             raise DatabaseException(e)
 
     @staticmethod
+    def result(_id: str) -> dict:
+        """
+        Gets question and its choice with its max votes.
+
+        :param _id: id of question to get.
+        :return: question and its choice with its max votes.
+        """
+        try:
+            question = Database.find_one(QuestionDao.collection_name,
+                                         {'_id': ObjectId(_id)})
+            question.update({'choices':
+                                 [question['choices'][id_] for id_, ch in
+                                  enumerate(question['choices'], start=0)
+                                  if question['choices'][id_]['votes'] == max(
+                                     c['votes'] for c in
+                                     question['choices'])]})
+            return question
+        except Exception as e:
+            raise DatabaseException(e)
+
+    @staticmethod
     def create(data: dict) -> dict:
         """
         Creates question in database.
