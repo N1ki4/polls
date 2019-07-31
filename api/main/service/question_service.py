@@ -113,14 +113,15 @@ class QuestionService:
         """
         try:
             question = QuestionService.get_by_id(_id)
-            if all(choice.get('votes') == 0 for choice in question['choices']):
+            if all(choice.get('votes') == 0 for choice in question['choices'])\
+                    and all(choice.get('rate_count') == 0 for choice in question['choices']):
                 result = Database.update_one(QuestionService.collection_name, _id,
                                              data)
                 if result.modified_count == 1:
                     return result.raw_result
             else:
                 raise DatabaseException("Access denied to change question "
-                                        "after someone have voted.")
+                                        "after someone have voted or rated it.")
         except Exception as e:
             raise DatabaseException(e)
 
